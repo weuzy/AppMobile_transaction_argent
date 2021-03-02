@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
@@ -16,33 +17,38 @@ class Client
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $nomComplet;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $telephone;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $numCNI;
 
     /**
-     * @ORM\OneToMany(targetEntity=TypeDeTransactionClient::class, mappedBy="clients")
+     * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="client")
      */
-    private $typeDeTransactionClients;
+    private $transactions;
 
     public function __construct()
     {
-        $this->typeDeTransactionClients = new ArrayCollection();
+        $this->transactions = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -86,32 +92,33 @@ class Client
     }
 
     /**
-     * @return Collection|TypeDeTransactionClient[]
+     * @return Collection|Transaction[]
      */
-    public function getTypeDeTransactionClients(): Collection
+    public function getTransactions(): Collection
     {
-        return $this->typeDeTransactionClients;
+        return $this->transactions;
     }
 
-    public function addTypeDeTransactionClient(TypeDeTransactionClient $typeDeTransactionClient): self
+    public function addTransaction(Transaction $transaction): self
     {
-        if (!$this->typeDeTransactionClients->contains($typeDeTransactionClient)) {
-            $this->typeDeTransactionClients[] = $typeDeTransactionClient;
-            $typeDeTransactionClient->setClients($this);
+        if (!$this->transactions->contains($transaction)) {
+            $this->transactions[] = $transaction;
+            $transaction->setClient($this);
         }
 
         return $this;
     }
 
-    public function removeTypeDeTransactionClient(TypeDeTransactionClient $typeDeTransactionClient): self
+    public function removeTransaction(Transaction $transaction): self
     {
-        if ($this->typeDeTransactionClients->removeElement($typeDeTransactionClient)) {
+        if ($this->transactions->removeElement($transaction)) {
             // set the owning side to null (unless already changed)
-            if ($typeDeTransactionClient->getClients() === $this) {
-                $typeDeTransactionClient->setClients(null);
+            if ($transaction->getClient() === $this) {
+                $transaction->setClient(null);
             }
         }
 
         return $this;
     }
+
 }

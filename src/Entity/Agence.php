@@ -2,13 +2,37 @@
 
 namespace App\Entity;
 
-use App\Repository\AgenceRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AgenceRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * @ORM\Entity(repositoryClass=AgenceRepository::class)
+ * @UniqueEntity(
+ *      fields = {"nom"},
+ *      message = {"Le nom de l'agence existe déjà, veuillez choisir un autre"}
+ * )
+ * @ApiResource(
+ *      normalizationContext = {"groups" = {"agence:read"}},
+ *      denormalizationContext = {"groups" = {"agence:write"}},
+ *      attributes = {
+ *          "security" = "is_granted('ROLE_AdminSysteme')",
+ *          "security_message" = "vous n'avez pas accés à cette ressource",
+ *          "pagination_enabled" = true,
+ *          "pagination_items_per_page" = 3
+ * },
+ *      routePrefix = "/19weuzy",
+ *      collectionOperations = {"get", "post"},
+ *      itemOperations = {"get", "put", "delete"}
+ * )
  */
 class Agence
 {
@@ -16,36 +40,49 @@ class Agence
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"agence:read", "agence:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "le nom ne peut pas être vide")
+     * @Assert\Regex(
+     * pattern = "/^[A-Z][a-z]+$/",
+     * message = "le nom commence par un majuscule"
+     * )
+     * @Groups({"agence:read", "agence:write"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message = "l'adresse ne peut pas être vide")
+     * @Groups({"agence:read", "agence:write"})
      */
     private $adresse;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"agence:read"})
      */
     private $statut;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="agence")
+     * @Groups({"agence:read"})
      */
     private $users;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"agence:read", "agence:write"})
      */
     private $telephone;
 
     /**
      * @ORM\OneToOne(targetEntity=CompteDeTransaction::class, cascade={"persist", "remove"})
+     * @Groups({"agence:read", "agence:write"})
      */
     private $compte;
 

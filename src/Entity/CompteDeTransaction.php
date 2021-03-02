@@ -2,13 +2,38 @@
 
 namespace App\Entity;
 
-use App\Repository\CompteDeTransactionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\CompteDeTransactionRepository;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 /**
  * @ORM\Entity(repositoryClass=CompteDeTransactionRepository::class)
+ * @UniqueEntity(
+ *      fields = {"numeroCompte"},
+ *      message = {"Le numéro compte existe déjà, veuillez choisir un autre"}
+ * )
+ * @ApiResource(
+ *      normalizationContext = {"groups" = {"admin:read"}},
+ *      denormalizationContext = {"groups" = {"admin:write"}},
+ *      attributes = {"security_message" = "vous n'avez pas accés à cette ressource"},
+ *      routePrefix = "/19weuzy",
+ *      collectionOperations = {"get"= {"security" = "is_granted('ROLE_AdminSysteme') or object"},
+ *           "addCompte" = { "method" = "POST", "route_name" = "addCompte",
+ *                      "security" = "is_granted('ROLE_AdminSysteme')"}},
+ *      itemOperations = {"get"= {"security" = "is_granted('ROLE_AdminSysteme') or object"},
+ *           "put" = {"security" = "is_granted('ROLE_AdminSysteme')"},
+ *           "delete" = {"security" = "is_granted('ROLE_AdminSysteme')"}}
+ * )
+ *
  */
 class CompteDeTransaction
 {
@@ -16,26 +41,72 @@ class CompteDeTransaction
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({
+     *      "admin:read",
+     *      "admin:write",
+     *      "agence:read",
+     *      "agence:write",
+     *      "Trans:read","Trans:write",
+     *      "dep:read", "dep:write"
+     * })
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({
+     *      "admin:read",
+     *      "admin:write",
+     *      "agence:read",
+     *      "agence:write",
+     *      "Trans:read",
+     *      "dep:read", "dep:write"
+     * })
      */
     private $numeroCompte;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({
+     *      "admin:read",
+     *      "admin:write",
+     *      "agence:read",
+     *      "agence:write",
+     *      "Trans:read","Trans:write",
+     *      "dep:read", "dep:write"
+     * })
+     * @Assert\NotBlank(message="veuillez mettre la solde")
+     * @Assert\Range(
+     *     min=700000,
+     *     max=100000000,
+     *     minMessage="The number field must contain at least one number",
+     *     maxMessage="The number field must contain maximum 3 numbers"
+     * )
+     * @Assert\Regex(
+     *     pattern="/^[0-9]+$/",
+     *     message="seul les chiffres sont permis"
+     * )
      */
     private $solde;
 
     /**
      * @ORM\Column(type="datetime")
+     *  @Groups({
+     *      "admin:read",
+     *      "admin:write",
+     *      "agence:read",
+     *      "agence:write"
+     * })
      */
     private $createAt;
 
     /**
      * @ORM\Column(type="boolean")
+     *  @Groups({
+     *      "admin:read",
+     *      "agence:read",
+     *      "dep:read", "dep:write"
+     * })
      */
     private $statut;
 
@@ -45,12 +116,19 @@ class CompteDeTransaction
      */
     private $transactions;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Depot::class, mappedBy="comptes")
+     */
+    private $depots;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->transactions = new ArrayCollection();
         $this->statut = false;
-
+        $this->numeroCompte = substr(md5(time()), 0, 10);
+        $this->createAt = new DateTime();
+        $this->depots = new ArrayCollection();
     }
 
 
@@ -131,6 +209,36 @@ class CompteDeTransaction
             // set the owning side to null (unless already changed)
             if ($transaction->getCompte() === $this) {
                 $transaction->setCompte(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Depot[]
+     */
+    public function getDepots(): Collection
+    {
+        return $this->depots;
+    }
+
+    public function addDepot(Depot $depot): self
+    {
+        if (!$this->depots->contains($depot)) {
+            $this->depots[] = $depot;
+            $depot->setComptes($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDepot(Depot $depot): self
+    {
+        if ($this->depots->removeElement($depot)) {
+            // set the owning side to null (unless already changed)
+            if ($depot->getComptes() === $this) {
+                $depot->setComptes(null);
             }
         }
 

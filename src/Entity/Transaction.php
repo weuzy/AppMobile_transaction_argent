@@ -2,13 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\TransactionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TransactionRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TransactionRepository::class)
+ * @ApiResource(
+ *      normalizationContext = {"groups" = {"Trans:read"}},
+ *      denormalizationContext = {"groups" = {"Trans:write"}},
+ *      attributes = {
+ *          "security" = "is_granted('ROLE_AdminAgence') or is_granted('ROLE_UtilisateurAgence')",
+ *          "security_message" = "vous n'avez pas accés à cette ressource",
+ *          "pagination_enabled" = true,
+ *          "pagination_items_per_page" = 8
+ * },
+ *      routePrefix = "/19weuzy",
+ *      collectionOperations = {"get", "post"},
+ *      itemOperations = {"get", "put"={"deserialize"=false}, "delete"}
+ * )
  */
 class Transaction
 {
@@ -16,73 +32,96 @@ class Transaction
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $montant;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"Trans:read"})
      */
     private $dateDepot;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $dateRetrait;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $codeTransaction;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $TTC;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $fraisDepot;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $fraisRetrait;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $fraisEtat;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $fraisSystem;
 
     /**
-     * @ORM\OneToMany(targetEntity=TypeDeTransactionUser::class, mappedBy="transactions")
-     */
-    private $typeDeTransactionUsers;
-
-    /**
-     * @ORM\OneToMany(targetEntity=TypeDeTransactionClient::class, mappedBy="transactions")
-     */
-    private $typeDeTransactionClients;
-
-    /**
      * @ORM\ManyToOne(targetEntity=CompteDeTransaction::class, inversedBy="transactions")
+     * @Groups({"Trans:read","Trans:write"})
      */
     private $compte;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"Trans:read"})
+     */
+    private $isDeleted;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"Trans:read","Trans:write"})
+     */
+    private $isDepot;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="transactions")
+     */
+    private $client;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactions")
+     */
+    private $user;
+
     public function __construct()
     {
-        $this->typeDeTransactionUsers = new ArrayCollection();
-        $this->typeDeTransactionClients = new ArrayCollection();
+        $this->isDeleted = false;
+        $this->dateDepot = new DateTime();
     }
 
     public function getId(): ?int
@@ -198,66 +237,6 @@ class Transaction
         return $this;
     }
 
-    /**
-     * @return Collection|TypeDeTransactionUser[]
-     */
-    public function getTypeDeTransactionUsers(): Collection
-    {
-        return $this->typeDeTransactionUsers;
-    }
-
-    public function addTypeDeTransactionUser(TypeDeTransactionUser $typeDeTransactionUser): self
-    {
-        if (!$this->typeDeTransactionUsers->contains($typeDeTransactionUser)) {
-            $this->typeDeTransactionUsers[] = $typeDeTransactionUser;
-            $typeDeTransactionUser->setTransactions($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTypeDeTransactionUser(TypeDeTransactionUser $typeDeTransactionUser): self
-    {
-        if ($this->typeDeTransactionUsers->removeElement($typeDeTransactionUser)) {
-            // set the owning side to null (unless already changed)
-            if ($typeDeTransactionUser->getTransactions() === $this) {
-                $typeDeTransactionUser->setTransactions(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|TypeDeTransactionClient[]
-     */
-    public function getTypeDeTransactionClients(): Collection
-    {
-        return $this->typeDeTransactionClients;
-    }
-
-    public function addTypeDeTransactionClient(TypeDeTransactionClient $typeDeTransactionClient): self
-    {
-        if (!$this->typeDeTransactionClients->contains($typeDeTransactionClient)) {
-            $this->typeDeTransactionClients[] = $typeDeTransactionClient;
-            $typeDeTransactionClient->setTransactions($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTypeDeTransactionClient(TypeDeTransactionClient $typeDeTransactionClient): self
-    {
-        if ($this->typeDeTransactionClients->removeElement($typeDeTransactionClient)) {
-            // set the owning side to null (unless already changed)
-            if ($typeDeTransactionClient->getTransactions() === $this) {
-                $typeDeTransactionClient->setTransactions(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCompte(): ?CompteDeTransaction
     {
         return $this->compte;
@@ -266,6 +245,54 @@ class Transaction
     public function setCompte(?CompteDeTransaction $compte): self
     {
         $this->compte = $compte;
+
+        return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getIsDepot(): ?bool
+    {
+        return $this->isDepot;
+    }
+
+    public function setIsDepot(bool $isDepot): self
+    {
+        $this->isDepot = $isDepot;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

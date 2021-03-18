@@ -48,7 +48,7 @@ class UserFixtures extends Fixture implements  DependentFixtureInterface
                 $nbrUserProfil = 4;
             }
             if ($profil -> getLibelle() === 'UtilisateurAgence') {
-                $nbrUserProfil = 20;
+                $nbrUserProfil = 10;
             }
 
             for ($i = 1; $i <= $nbrUserProfil; $i++) {

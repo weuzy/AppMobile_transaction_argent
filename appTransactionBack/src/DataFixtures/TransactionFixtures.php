@@ -27,6 +27,16 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
                          -> setFraisEtat( $faker -> randomFloat() )
                          -> setFraisRetrait( $faker -> randomFloat() )
                          -> setFraisSystem( $faker -> randomFloat() )
+                         -> setPrenomEmetteur($faker -> firstName)
+                         -> setNomEmetteur( $faker -> lastName)
+                         -> setCniEmetteur( $faker -> ean13)
+                         -> setPrenomRecepteur( $faker -> lastName)
+                         -> setNomRecepteur( $faker -> lastName)
+                         -> setCniRecepteur( $faker -> ean13)
+                         -> setTelephoneEmetteur($faker -> phoneNumber)
+                         -> setTelephoneRecepteur( $faker -> phoneNumber)
+                         -> setStatut( $faker -> randomElement(['encours', 'retiré']))
+                         -> setUser($this -> getReference(UserFixtures::addReferenceUtilisateurAgence($i)))
                          -> setCompte( $this -> getReference(CompteFixtures::getReferenceKey($i)));
             $this -> addReference( self::getReferenceKey($i), $transaction);
             $manager -> persist($transaction);
@@ -38,7 +48,8 @@ class TransactionFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return array(
-            CompteFixtures::class
+            CompteFixtures::class,
+            UserFixtures::class
         );
     }
 }

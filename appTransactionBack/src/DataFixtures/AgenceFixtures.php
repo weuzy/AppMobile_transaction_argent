@@ -21,7 +21,6 @@ class AgenceFixtures extends Fixture implements DependentFixtureInterface
             $agence = new Agence();
             $agence -> setNom( $faker -> company)
                     -> setAdresse( $faker -> streetAddress)
-                    -> setTelephone( $faker -> phoneNumber)
                     -> setCompte( $this -> getReference(CompteFixtures::getReferenceKey($i)))
                     -> addUser( $this -> getReference(UserFixtures::addReferenceAdminAgence($i)));
                 for ( $j = 1; $j <= 2; $j++) {

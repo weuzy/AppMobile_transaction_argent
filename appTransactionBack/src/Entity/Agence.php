@@ -75,14 +75,8 @@ class Agence
     private $users;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"agence:read", "agence:write"})
-     */
-    private $telephone;
-
-    /**
      * @ORM\OneToOne(targetEntity=CompteDeTransaction::class, cascade={"persist", "remove"})
-     * @Groups({"agence:read", "agence:write"})
+     * @Groups({"connectUser", "agence:read", "agence:write"})
      */
     private $compte;
 
@@ -160,18 +154,6 @@ class Agence
                 $user->setAgence(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTelephone(): ?string
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(string $telephone): self
-    {
-        $this->telephone = $telephone;
 
         return $this;
     }

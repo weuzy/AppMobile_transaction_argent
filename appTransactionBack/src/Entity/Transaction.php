@@ -38,25 +38,25 @@ class Transaction
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:read","Trans:write","depotTrans","retraitTrans"})
      */
     private $montant;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"Trans:read"})
+     * @Groups({"Trans:read","depotTrans"})
      */
     private $dateDepot;
 
     /**
-     * @ORM\Column(type="date")
-     * @Groups({"Trans:read","Trans:write"})
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"Trans:read","Trans:write","retraitTrans"})
      */
     private $dateRetrait;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:read","Trans:write","depotTrans"})
      */
     private $codeTransaction;
 
@@ -103,20 +103,68 @@ class Transaction
     private $isDeleted;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"Trans:read","Trans:write"})
-     */
-    private $isDepot;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="transactions")
-     */
-    private $client;
-
-    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactions")
      */
     private $user;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateAnnulation;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $prenomEmetteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $nomEmetteur;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $cniEmetteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $prenomRecepteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $nomRecepteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $telephoneRecepteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $telephoneEmetteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"depotTrans","retraitTrans"})
+     */
+    private $statut;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $cniRecepteur;
+
 
     public function __construct()
     {
@@ -261,30 +309,6 @@ class Transaction
         return $this;
     }
 
-    public function getIsDepot(): ?bool
-    {
-        return $this->isDepot;
-    }
-
-    public function setIsDepot(bool $isDepot): self
-    {
-        $this->isDepot = $isDepot;
-
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function setClient(?Client $client): self
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -296,4 +320,125 @@ class Transaction
 
         return $this;
     }
+
+    public function getDateAnnulation(): ?\DateTimeInterface
+    {
+        return $this->dateAnnulation;
+    }
+
+    public function setDateAnnulation(?\DateTimeInterface $dateAnnulation): self
+    {
+        $this->dateAnnulation = $dateAnnulation;
+
+        return $this;
+    }
+
+    public function getPrenomEmetteur(): ?string
+    {
+        return $this->prenomEmetteur;
+    }
+
+    public function setPrenomEmetteur(string $prenomEmetteur): self
+    {
+        $this->prenomEmetteur = $prenomEmetteur;
+
+        return $this;
+    }
+
+    public function getNomEmetteur(): ?string
+    {
+        return $this->nomEmetteur;
+    }
+
+    public function setNomEmetteur(string $nomEmetteur): self
+    {
+        $this->nomEmetteur = $nomEmetteur;
+
+        return $this;
+    }
+
+    public function getCniEmetteur(): ?int
+    {
+        return $this->cniEmetteur;
+    }
+
+    public function setCniEmetteur(int $cniEmetteur): self
+    {
+        $this->cniEmetteur = $cniEmetteur;
+
+        return $this;
+    }
+
+    public function getPrenomRecepteur(): ?string
+    {
+        return $this->prenomRecepteur;
+    }
+
+    public function setPrenomRecepteur(string $prenomRecepteur): self
+    {
+        $this->prenomRecepteur = $prenomRecepteur;
+
+        return $this;
+    }
+
+    public function getNomRecepteur(): ?string
+    {
+        return $this->nomRecepteur;
+    }
+
+    public function setNomRecepteur(string $nomRecepteur): self
+    {
+        $this->nomRecepteur = $nomRecepteur;
+
+        return $this;
+    }
+
+    public function getTelephoneRecepteur(): ?string
+    {
+        return $this->telephoneRecepteur;
+    }
+
+    public function setTelephoneRecepteur(string $telephoneRecepteur): self
+    {
+        $this->telephoneRecepteur = $telephoneRecepteur;
+
+        return $this;
+    }
+
+    public function getTelephoneEmetteur(): ?string
+    {
+        return $this->telephoneEmetteur;
+    }
+
+    public function setTelephoneEmetteur(string $telephoneEmetteur): self
+    {
+        $this->telephoneEmetteur = $telephoneEmetteur;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getCniRecepteur(): ?int
+    {
+        return $this->cniRecepteur;
+    }
+
+    public function setCniRecepteur(int $cniRecepteur): self
+    {
+        $this->cniRecepteur = $cniRecepteur;
+
+        return $this;
+    }
+
 }

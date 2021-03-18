@@ -26,6 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * },
  *      routePrefix = "/19weuzy",
  *      collectionOperations = {"get",
+ *            "getUserConnect" = { "method"= "GET", "route_name" = "getUserConnect"},
  *           "add_user" = {
  *           "method" = "POST",
  *           "route_name" = "add_user"}
@@ -69,7 +70,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"admin:read", "admin:write", "profil:read", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
+     * @Groups({"connectUser", "admin:read", "admin:write", "profil:read", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
      */
     private $prenom;
 
@@ -99,13 +100,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="blob", nullable=true)
-     * @Groups({"admin:write", "admin:read", "Trans:read","Trans:write"})
+     * @Groups({"connectUser", "admin:write", "admin:read", "Trans:read","Trans:write"})
      */
     private $photo;
 
     /**
      * @ORM\ManyToOne(targetEntity=Agence::class, inversedBy="users")
-     * @Groups({"admin:read", "Trans:read"})
+     * @Groups({"connectUser", "admin:read", "Trans:read"})
      */
     private $agence;
 

@@ -30,7 +30,8 @@ class Depot
      * @ORM\Column(type="integer")
      * @Groups({
      *      "dep:read",
-     *      "dep:write"
+     *      "dep:write",
+     *      "connectUser"
      *})
      */
     private $id;
@@ -39,7 +40,8 @@ class Depot
      * @ORM\Column(type="date")
      * @Groups({
      *      "dep:read",
-     *      "dep:write"
+     *      "dep:write",
+     *      "connectUser"
      *})
      */
     private $dateDepot;

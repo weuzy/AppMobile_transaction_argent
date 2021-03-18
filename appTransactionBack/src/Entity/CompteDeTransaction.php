@@ -47,7 +47,8 @@ class CompteDeTransaction
      *      "agence:read",
      *      "agence:write",
      *      "Trans:read","Trans:write",
-     *      "dep:read", "dep:write"
+     *      "dep:read", "dep:write",
+     *      "connectUser"
      * })
      */
     private $id;
@@ -66,8 +67,9 @@ class CompteDeTransaction
     private $numeroCompte;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      * @Groups({
+     *     "connectUser",
      *      "admin:read",
      *      "admin:write",
      *      "agence:read",
@@ -75,19 +77,8 @@ class CompteDeTransaction
      *      "Trans:read","Trans:write",
      *      "dep:read", "dep:write"
      * })
-     * @Assert\NotBlank(message="veuillez mettre la solde")
-     * @Assert\Range(
-     *     min=700000,
-     *     max=100000000,
-     *     minMessage="The number field must contain at least one number",
-     *     maxMessage="The number field must contain maximum 3 numbers"
-     * )
-     * @Assert\Regex(
-     *     pattern="/^[0-9]+$/",
-     *     message="seul les chiffres sont permis"
-     * )
      */
-    private $solde;
+    private $solde = 700000;
 
     /**
      * @ORM\Column(type="datetime")
@@ -95,7 +86,8 @@ class CompteDeTransaction
      *      "admin:read",
      *      "admin:write",
      *      "agence:read",
-     *      "agence:write"
+     *      "agence:write",
+     *      "connectUser"
      * })
      */
     private $createAt;
@@ -118,6 +110,7 @@ class CompteDeTransaction
 
     /**
      * @ORM\OneToMany(targetEntity=Depot::class, mappedBy="comptes")
+     * @Groups({"connectUser"})
      */
     private $depots;
 
@@ -149,12 +142,13 @@ class CompteDeTransaction
         return $this;
     }
 
-    public function getSolde(): ?int
+    public function getSolde(): ?float
     {
-        return $this->solde;
+        //return number_format($this->solde, null, null, ' ');
+        return  $this->solde;
     }
 
-    public function setSolde(int $solde): self
+    public function setSolde(float $solde): self
     {
         $this->solde = $solde;
 

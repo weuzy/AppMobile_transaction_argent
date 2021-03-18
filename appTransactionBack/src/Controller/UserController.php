@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,13 +24,15 @@ class UserController extends AbstractController
     private $validator;
     private $em;
     private $repoUser;
+    private $weuz;
     public function __construct(
         UserPasswordEncoderInterface $encoder,
         SerializerInterface $serializer,
         ProfilRepository $pro,
         ValidatorInterface $validator,
         EntityManagerInterface $em,
-        UserRepository $repo
+        UserRepository $repo,
+        Security $weuz
     )
     {
         $this -> encoder = $encoder;
@@ -38,6 +41,17 @@ class UserController extends AbstractController
         $this -> repoUser = $repo;
         $this -> validator = $validator;
         $this -> em = $em;
+        $this -> weuz = $weuz;
+    }
+    /**
+     * @Route(path="/api/19weuzy/user", name="getUserConnect", methods="get"),
+     */
+    public function getUsername(SerializerInterface $serializer)
+    {
+        $user = $this->getUser();
+        $user=$serializer->normalize($user, 'JSON', ['groups' => 'connectUser']);
+        return new JsonResponse($user, Response::HTTP_OK);
+
     }
     /**
      * @Route("/api/19weuzy/users", name="add_user", methods="post"),

@@ -1,0 +1,19 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="admin" *ngIf="getRoles() === 'ROLE_AdminSysteme' || getRoles() === 'ROLE_Caissier'">
+      <ion-icon name="home"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="caissiers" *ngIf="getRoles() === 'ROLE_AdminSysteme'">
+      <ion-icon name="list-circle-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="agences" *ngIf="getRoles() === 'ROLE_AdminSysteme'">
+      <ion-icon name="business-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="depot-compte" *ngIf="getRoles() === 'ROLE_AdminSysteme' || getRoles() === 'ROLE_Caissier'">
+      <ion-icon name="wallet-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="depots-caissier" *ngIf="getRoles() === 'ROLE_AdminSysteme' || getRoles() === 'ROLE_Caissier'">
+      <ion-icon name="cash-outline"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

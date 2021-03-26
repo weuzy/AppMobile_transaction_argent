@@ -1,9 +1,49 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>comissions</ion-title>
+<ion-header class="ion-no-padding">
+  <ion-toolbar class="ion-no-padding">
+    <ion-buttons slot="start">
+      <ion-menu-button color="weuzy" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-item lines="none" slot="end">
+      <ion-thumbnail class="image-center">
+        <div class="center">
+          <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+        </div>
+      </ion-thumbnail>
+    </ion-item>
+    <div  class="title">
+      <ion-icon color="weuzy" slot="start"
+                name="sync-outline"></ion-icon>
+      <b>Mes comissions</b>
+    </div>
   </ion-toolbar>
+  <div class="inner"></div>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-align-items-center">
+  <ion-row class="ion-margin header-row">
+    <ion-col size="5" tappable (click)="sortBy('type')">
+      Borne inférieure
+      <ion-icon name="arrow-down" *ngIf="sortDirection==1"></ion-icon>
+      <ion-icon name="arrow-up" *ngIf="sortDirection==2"></ion-icon>
+    </ion-col>
+    <ion-col size="5">
+      Borne supérieure
+    </ion-col>
+    <ion-col size="2">
+      Frais
+    </ion-col>
+  </ion-row>
 
+  <ion-row *ngFor="let row of data; let i = index;" class="data-row">
+    <ion-col class="ion-text-center" size="5">
+      {{row.borneInf?.toLocaleString()}}
+    </ion-col>
+    <ion-col class="ion-text-center"  size="5">
+      {{row.borneSup?.toLocaleString()}}
+    </ion-col>
+    <ion-col size="2">
+      {{row.fraisEnvoie?.toLocaleString()}}
+    </ion-col>
+
+  </ion-row>
 </ion-content>

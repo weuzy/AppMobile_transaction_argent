@@ -1,9 +1,16 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>tabs</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-
-</ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home" *ngIf="getRoles() === 'ROLE_AdminAgence' || getRoles() === 'ROLE_UtilisateurAgence'">
+      <ion-icon name="home"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="mes-transactions" *ngIf="getRoles() === 'ROLE_AdminAgence' || getRoles() === 'ROLE_UtilisateurAgence'">
+      <ion-icon name="sync-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="comissions" *ngIf="getRoles() === 'ROLE_AdminAgence'">
+      <ion-icon name="server-outline"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="calculFrais" *ngIf="getRoles() === 'ROLE_AdminAgence' || getRoles() === 'ROLE_UtilisateurAgence'">
+      <ion-icon name="calculator"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

@@ -1,3 +1,122 @@
-<p>
-  add-user works!
-</p>
+<ion-header >
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-buttons slot="start">
+        <ion-button (click)="dismissModal()">
+          <ion-icon color="weuzy" name="close-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-thumbnail class="image-center">
+        <div class="center">
+          <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+        </div>
+      </ion-thumbnail>
+      <ion-avatar slot="end">
+        <img  src="data:image/png;base64,{{user.photo}}" alt="{{user.prenom}}">
+      </ion-avatar>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form class="ion-margin" (ngSubmit)="onSubmit()" [formGroup]="addUser">
+    <ion-list class="emetteur">
+      <ion-item>
+        <ion-label color="medium" position="floating">Profil</ion-label>
+        <ion-select [formControlName]="'profil'" placeholder="Select One">
+          <ion-select-option value="f">Caissier</ion-select-option>
+        </ion-select>
+        <small class="danger" *ngIf="(fo.profil.touched && fo.profil.hasError('required')) || (submitted && fo.profil.hasError('required'))">
+          <i>Veuillez sélectionner un profil</i>
+        </small>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="medium" position="floating">Nom</ion-label>
+        <ion-input  [formControlName]="'nom'" clear-input inputmode="text"></ion-input>
+        <small class="danger" *ngIf="(fo.nom.touched && fo.nom.hasError('required')) || (submitted && fo.nom.hasError('required'))">
+          <i>le nom est obligatoire</i>
+        </small>
+        <small class="danger" *ngIf="(fo.nom.touched && fo.nom.hasError('pattern')) || (submitted && fo.nom.hasError('pattern'))">
+          <i>le nom est en majuscule</i>
+        </small>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="medium" position="floating">Prénom</ion-label>
+        <ion-input  [formControlName]="'prenom'" clear-input inputmode="text"></ion-input>
+        <small class="danger" *ngIf="(fo.prenom.touched && fo.prenom.hasError('pattern')) || (submitted && fo.prenom.hasError('pattern'))">
+          <i>le prénom commence par une lettre majuscule</i>
+        </small>
+        <small class="danger" *ngIf="(fo.prenom.touched && fo.prenom.hasError('required')) || (submitted && fo.prenom.hasError('required'))">
+          <i>le prénom est obligatoire</i>
+        </small>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="medium" position="floating">Téléphone</ion-label>
+        <ion-input  [formControlName]="'telephone'" clear-input type="number"></ion-input>
+        <small class="danger" *ngIf="(fo.telephone.touched && fo.telephone.hasError('pattern')) || (submitted && fo.telephone.hasError('pattern'))">
+          <i>Seul les opérateurs du pays sont permis</i>
+        </small>
+        <small class="danger" *ngIf="(fo.telephone.touched && fo.telephone.hasError('required')) || (submitted && fo.telephone.hasError('required'))">
+          <i>le numéro téléphone est obligatoire</i>
+        </small>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="medium" position="floating">Email</ion-label>
+        <ion-input  [formControlName]="'email'"  clear-input type="email"></ion-input>
+        <small class="danger" *ngIf="(fo.email.touched && fo.email.hasError('pattern')) || (submitted && fo.email.hasError('pattern'))">
+          <i>l'email n'est pas valide</i>
+        </small>
+        <small class="danger" *ngIf="(fo.email.touched && fo.email.hasError('required')) || (submitted && fo.email.hasError('required'))">
+          <i>l'email est obligatoire</i>
+        </small>
+      </ion-item>
+
+      <br>
+
+      <ion-item >
+        <ion-button color="weuzy" class="fileUpload"
+          <ion-label color="medium" >Upload photo</ion-label>
+          <input class="upload" [formControlName]="'photo'" type="file" (change)="loadImageFromDevice($event)" id="file-input"
+                 accept="image/png, image/jpeg">
+        </ion-button>
+        <small class="danger" *ngIf="(fo.photo.touched && fo.photo.hasError('required')) || (submitted && fo.photo.hasError('required'))">
+          <i>la photo est obligatoire</i>
+        </small>
+        <small class="danger" *ngIf="(fo.photo.touched && fo.photo.hasError('maxContentSize')) || (submitted && fo.photo.hasError('maxContentSize'))">
+          <i>La taille totale ne doit pas dépasser
+            {{fo.photo.getError('maxContentSize').maxSize | byteFormat}} ({{fo.photo.getError('maxContentSize').actualSize| byteFormat}}).
+          </i>
+        </small>
+      </ion-item>
+
+      <ion-item>
+        <ion-label color="medium" position="floating">Username</ion-label>
+        <ion-input [formControlName]="'username'" readonly type="text" clear-input></ion-input>
+        <small class="danger" *ngIf="(fo.username.touched && fo.username.hasError('required')) || (submitted && fo.username.hasError('required'))">
+          <i>le username est obligatoire</i>
+        </small>
+      </ion-item>
+      <br>
+      <ion-item>
+        <ion-label color="medium" position="floating">Agence</ion-label>
+        <ion-select [formControlName]="'agence'" placeholder="Select One">
+          <ion-select-option value="f">nom agence</ion-select-option>
+        </ion-select>
+        <small class="danger" *ngIf="(fo.agence.touched && fo.agence.hasError('required')) || (submitted && fo.agence.hasError('required'))">
+          <i>Veuillez sélectionner une agence</i>
+        </small>
+      </ion-item>
+
+      <ion-button
+        class="ion-margin next" color="weuzy" type="submit" shape="round" expand="full">
+        Valider
+      </ion-button>
+    </ion-list>
+  </form>
+
+
+</ion-content>
+

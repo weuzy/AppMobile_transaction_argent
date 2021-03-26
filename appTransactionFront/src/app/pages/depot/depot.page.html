@@ -1,9 +1,146 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>depot</ion-title>
+<ion-header class="ion-no-padding">
+  <ion-toolbar class="ion-no-padding">
+    <ion-buttons slot="start">
+      <ion-icon class="back"  color="weuzy" routerLink="/tabs/home" name="home"></ion-icon>
+    </ion-buttons>
+    <ion-item lines="none" slot="end">
+      <ion-thumbnail class="image-center">
+        <div class="center">
+          <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+        </div>
+      </ion-thumbnail>
+    </ion-item>
+    <div  class="title">
+      <ion-icon color="weuzy" slot="start"
+                name="return-down-forward-outline"></ion-icon>
+      <b>Dépôt</b>
+    </div>
   </ion-toolbar>
+  <div class="inner"></div>
 </ion-header>
-
 <ion-content>
+    <ion-segment color="weuzy" [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="emetteur">
+        <ion-label>Emétteur</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="beneficiaire">
+        <ion-label>Bénéficiaire</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <form class="ion-margin" (ngSubmit)="onSubmit()" [formGroup]="depotForm">
+      <ion-list class="emetteur" *ngIf="selectedSegment === 'emetteur'">
 
+          <ion-item>
+            <ion-label color="medium" position="floating">N° CNI</ion-label>
+            <ion-input [formControlName]="'cniEmetteur'" clear-input type="number"></ion-input>
+            <small class="danger" *ngIf="(fo.cniEmetteur.touched && fo.cniEmetteur.hasError('required')) || (submitted && fo.cniEmetteur.hasError('required'))">
+                <i>le numéro CNI est obligatoire</i>
+            </small>
+            <small class="danger" *ngIf="(fo.cniEmetteur.touched && fo.cniEmetteur.hasError('pattern')) || (submitted && fo.cniEmetteur.hasError('pattern'))">
+                <i>le numéro CNI doit avoir 13 chiffres</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Nom</ion-label>
+            <ion-input  [formControlName]="'nomEmetteur'" clear-input inputmode="text"></ion-input>
+            <small class="danger" *ngIf="(fo.nomEmetteur.touched && fo.nomEmetteur.hasError('required')) || (submitted && fo.nomEmetteur.hasError('required'))">
+            <i>le nom est obligatoire</i>
+            </small>
+            <small class="danger" *ngIf="(fo.nomEmetteur.touched && fo.nomEmetteur.hasError('pattern')) || (submitted && fo.nomEmetteur.hasError('pattern'))">
+            <i>le nom est en majuscule</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Prénom</ion-label>
+            <ion-input  [formControlName]="'prenomEmetteur'" clear-input inputmode="text"></ion-input>
+            <small class="danger" *ngIf="(fo.prenomEmetteur.touched && fo.prenomEmetteur.hasError('pattern')) || (submitted && fo.prenomEmetteur.hasError('pattern'))">
+              <i>le prénom commence par une lettre majuscule</i>
+            </small>
+            <small class="danger" *ngIf="(fo.prenomEmetteur.touched && fo.prenomEmetteur.hasError('required')) || (submitted && fo.prenomEmetteur.hasError('required'))">
+              <i>le prénom est obligatoire</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Téléphone</ion-label>
+            <ion-input  [formControlName]="'telephoneEmetteur'" clear-input type="number"></ion-input>
+            <small class="danger" *ngIf="(fo.telephoneEmetteur.touched && fo.telephoneEmetteur.hasError('pattern')) || (submitted && fo.telephoneEmetteur.hasError('pattern'))">
+              <i>Seul les opérateurs du pays sont permis</i>
+            </small>
+            <small class="danger" *ngIf="(fo.telephoneEmetteur.touched && fo.telephoneEmetteur.hasError('required')) || (submitted && fo.telephoneEmetteur.hasError('required'))">
+              <i>le numéro téléphone est obligatoire</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Montant</ion-label>
+            <ion-input (keyup)=" basse()" [formControl]="montantCtl"  clear-input min="500" type="number"></ion-input>
+            <small class="danger" *ngIf="(fo.montant.touched && fo.montant.hasError('pattern')) || (submitted && fo.montant.hasError('pattern'))">
+              <i>le montant donné n'est pas valable</i>
+            </small>
+            <small class="danger" *ngIf="(fo.montant.touched && fo.montant.hasError('required')) || (submitted && fo.montant.hasError('required'))">
+              <i>le montant est obligatoire</i>
+            </small>
+          </ion-item>
+
+          <ion-item class="frais">
+            <ion-label color="medium" position="floating">Frais</ion-label>
+            <ion-input  readonly [formControl]="fraisCtl" clear-input></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Total</ion-label>
+            <ion-input [formControlName]="'montant'" readonly type="number" clear-input></ion-input>
+          </ion-item>
+
+          <ion-button
+            class="ion-margin next" color="weuzy" (click)="next()" shape="round" expand="full">
+            Suivant
+          </ion-button>
+        </ion-list>
+
+      <ion-list class="beneficiaire"  *ngIf="selectedSegment === 'beneficiaire'">
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Prénom</ion-label>
+            <ion-input  [formControlName]="'prenomRecepteur'" clear-input inputmode="text"></ion-input>
+            <small class="danger" *ngIf="(fo.prenomRecepteur.touched && fo.prenomRecepteur.hasError('pattern')) || (submitted && fo.prenomRecepteur.hasError('pattern'))">
+              <i>le nom est en majuscule</i>
+            </small>
+            <small class="danger" *ngIf="(fo.prenomRecepteur.touched && fo.prenomRecepteur.hasError('required')) || (submitted && fo.prenomRecepteur.hasError('required'))">
+              <i>le prénom est obligatoire</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Nom</ion-label>
+            <ion-input  [formControlName]="'nomRecepteur'" clear-input inputmode="text"></ion-input>
+            <small class="danger" *ngIf="(fo.nomRecepteur.touched && fo.nomRecepteur.hasError('pattern')) || (submitted && fo.nomRecepteur.hasError('pattern'))">
+              <i>le nom est en majuscule</i>
+            </small>
+            <small class="danger" *ngIf="(fo.nomRecepteur.touched && fo.nomRecepteur.hasError('required')) || (submitted && fo.nomRecepteur.hasError('required'))">
+              <i>le nom est obligatoire</i>
+            </small>
+          </ion-item>
+
+          <ion-item>
+            <ion-label color="medium" position="floating">Téléphone</ion-label>
+            <ion-input  [formControlName]="'telephoneRecepteur'" clear-input type="number" inputmode="tel"></ion-input>
+            <small class="danger" *ngIf="(fo.telephoneRecepteur.touched && fo.telephoneRecepteur.hasError('pattern')) || (submitted && fo.telephoneRecepteur.hasError('pattern'))">
+              <i>Seul les opérateurs du pays sont permis</i>
+            </small>
+            <small class="danger" *ngIf="(fo.telephoneRecepteur.touched && fo.telephoneRecepteur.hasError('required')) || (submitted && fo.telephoneRecepteur.hasError('required'))">
+              <i>le numéro téléphone est obligatoire</i>
+            </small>
+          </ion-item>
+
+        <ion-button
+          class="ion-margin next" color="weuzy" type="submit" shape="round" expand="full">
+          Suivant
+        </ion-button>
+      </ion-list>
+
+    </form>
 </ion-content>

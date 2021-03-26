@@ -1,9 +1,101 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>retrait</ion-title>
-  </ion-toolbar>
+<ion-header class="ion-no-padding">
+<ion-toolbar class="ion-no-padding">
+  <ion-buttons slot="start">
+    <ion-icon class="back" color="weuzy" routerLink="/tabs/home" name="home"></ion-icon>
+  </ion-buttons>
+  <ion-item lines="none" slot="end">
+    <ion-thumbnail class="image-center">
+      <div class="center">
+        <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+      </div>
+    </ion-thumbnail>
+  </ion-item>
+  <div  class="title">
+    <ion-icon color="weuzy" slot="start"
+              name="return-down-forward-outline"></ion-icon>
+    <b>Retrait</b>
+  </div>
+</ion-toolbar>
+<div class="inner"></div>
 </ion-header>
-
 <ion-content>
 
+    <ion-list>
+      <form (ngSubmit)="onSubmit()" [formGroup]="retraitForm">
+        <ion-item>
+          <ion-label color="medium" position="floating">Code de transaction</ion-label>
+          <ion-input clear-input (focusout)="getTransaction()" [(ngModel)]="code" [formControlName]="'codeTransaction'" ></ion-input>
+          <small class="danger" *ngIf="submitted==true && fo.codeTransaction.hasError('required')">
+            <i>le Code de transaction est obligatoire</i>
+          </small>
+        </ion-item>
+      </form>
+      <ion-segment class="ion-no-margin" color="weuzy" [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)">
+        <ion-segment-button value="emetteur">
+          <ion-label>Emétteur</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="beneficiaire">
+         <ion-label>Bénéficiaire</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-list>
+  <form class="ion-margin" (ngSubmit)="onSubmit()" [formGroup]="retraitForm">
+      <ion-list class="emetteur" *ngIf="selectedSegment === 'emetteur'">
+        <ion-item>
+          <ion-label color="medium" position="floating">N° CNI</ion-label>
+          <ion-input [formControlName]="'cniRecepteur'" type="number" clear-input ></ion-input>
+          <small class="danger" *ngIf="(submitted==true && fo.cniRecepteur.hasError('required')) ||
+              (fo.cniRecepteur.touched && fo.cniRecepteur.hasError('required'))">
+          <i>le numéro CNI est obligatoire</i>
+          </small>
+          <small class="danger" *ngIf="(submitted==true && fo.cniRecepteur.hasError('pattern')) ||
+              (fo.cniRecepteur.touched && fo.cniRecepteur.hasError('pattern'))">
+            <i>le numéro CNI doit avoir 13 chiffres</i>
+          </small>
+        </ion-item>
+        <ion-list class="ion-margin" lines="none">
+          <div>
+            <ion-label color="medium"><small>Nom&Prénom</small></ion-label>
+            <br><span>{{transaction.prenomRecepteur}} {{transaction.nomRecepteur}}</span>
+          </div>
+          <div>
+            <ion-label color="medium"><small>Montant à recevoir</small></ion-label>
+            <br><span>{{transaction.montant - myfraisService.calculerFrais(transaction.montant)}}</span>
+          </div>
+          <div>
+            <ion-label color="medium"><small>Téléphone</small></ion-label>
+            <br><span>{{transaction.telephoneRecepteur}}</span>
+          </div>
+          <div>
+            <ion-label color="medium"><small>Date d'envoi</small></ion-label>
+            <br><span>{{transaction.dateDepot | date}}</span>
+          </div>
+        </ion-list>
+      </ion-list>
+      <ion-list class="beneficiaire" *ngIf="selectedSegment === 'beneficiaire'">
+        <div>
+          <ion-label color="medium"><small>N° CNI</small></ion-label>
+          <br><span>{{transaction.cniEmetteur}}</span>
+        </div>
+        <div>
+          <ion-label color="medium"><small>Nom&Prénom</small></ion-label>
+          <br><span>{{transaction.prenomEmetteur}} {{transaction.nomEmetteur}}</span>
+        </div>
+        <div>
+          <ion-label color="medium"><small>Montant envoyé</small></ion-label>
+          <br><span>{{transaction.montant}}</span>
+        </div>
+        <div>
+          <ion-label color="medium"><small>Téléphone</small></ion-label>
+          <br><span>{{transaction.telephoneEmetteur}}</span>
+        </div>
+        <div>
+          <ion-label color="medium"><small>Date d'envoi</small></ion-label>
+          <br><span>{{transaction.dateDepot | date}}</span>
+        </div>
+      </ion-list>
+    <ion-button class="ion-margin next" color="weuzy" type="submit" shape="round" expand="full">
+      Rétirer
+    </ion-button>
+  </form>
 </ion-content>

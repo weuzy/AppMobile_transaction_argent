@@ -1,9 +1,41 @@
-<ion-header>
+<ion-header >
   <ion-toolbar>
-    <ion-title>homeAdmin</ion-title>
+    <ion-item lines="none">
+      <ion-buttons slot="start">
+        <ion-menu-button menu="main-menu" autoHide="false"></ion-menu-button>
+      </ion-buttons>
+      <ion-thumbnail class="image-center">
+        <div class="center">
+          <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+        </div>
+      </ion-thumbnail>
+      <ion-avatar slot="end" *ngIf="user">
+        <img  src="data:image/png;base64,{{user.photo}}" alt="{{user.prenom}}">
+      </ion-avatar>
+    </ion-item>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-
+  <ion-list>
+    <ion-item detail routerLink="/caissiers" *ngIf="getRoles() === 'ROLE_AdminSysteme'">
+      <ion-icon color="weuzy" name="list-circle-outline"></ion-icon>
+      <ion-label>Listes des Caissiers</ion-label>
+    </ion-item>
+    <ion-item detail routerLink="/depotCompte" *ngIf="getRoles() === 'ROLE_AdminSysteme'|| getRoles() === 'ROLE_Caissier'">
+      <ion-icon color="weuzy" name="wallet-outline"></ion-icon>
+      <ion-label>Chargement d'un compte</ion-label>
+    </ion-item>
+    <ion-item detail routerLink="/depots-caissier" *ngIf="getRoles() === 'ROLE_AdminSysteme'|| getRoles() === 'ROLE_Caissier'">
+      <ion-icon color="weuzy" name="cash-outline"></ion-icon>
+      <ion-label>Mes dépots</ion-label>
+    </ion-item>
+    <ion-item detail routerLink="/agences" *ngIf="getRoles() === 'ROLE_AdminSysteme'">
+      <ion-icon color="weuzy" name="business-outline"></ion-icon>
+      <ion-label>Listes des Agences</ion-label>
+    </ion-item>
+    <ion-item (click)="logout()">
+      <ion-icon color="weuzy" name="log-out-outline"></ion-icon>
+      <ion-label>Déconnexion</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

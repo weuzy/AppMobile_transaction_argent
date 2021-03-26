@@ -3,6 +3,40 @@
 
 /** Ionic CSS Variables **/
 :root {
+  --ion-color-weuthie: #c56000;
+  --ion-color-weuthie-rgb: 197,96,0;
+  --ion-color-weuthie-contrast: #ffffff;
+  --ion-color-weuthie-contrast-rgb: 255,255,255;
+  --ion-color-weuthie-shade: #ad5400;
+  --ion-color-weuthie-tint: #cb701a;
+}
+
+.ion-color-weuthie {
+  --ion-color-base: var(--ion-color-weuthie);
+  --ion-color-base-rgb: var(--ion-color-weuthie-rgb);
+  --ion-color-contrast: var(--ion-color-weuthie-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-weuthie-contrast-rgb);
+  --ion-color-shade: var(--ion-color-weuthie-shade);
+  --ion-color-tint: var(--ion-color-weuthie-tint);
+}
+:root {
+  --ion-color-weuzy: #efa20a;
+  --ion-color-weuzy-rgb: 239,162,10;
+  --ion-color-weuthie-contrast: #ffffff;
+  --ion-color-weuzy-contrast-rgb: 0,0,0;
+  --ion-color-weuzy-shade: #d28f09;
+  --ion-color-weuzy-tint: #f1ab23;
+}
+
+.ion-color-weuzy {
+  --ion-color-base: var(--ion-color-weuzy);
+  --ion-color-base-rgb: var(--ion-color-weuzy-rgb);
+  --ion-color-contrast: var(--ion-color-weuzy-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-weuzy-contrast-rgb);
+  --ion-color-shade: var(--ion-color-weuzy-shade);
+  --ion-color-tint: var(--ion-color-weuzy-tint);
+}
+:root {
   /** primary **/
   --ion-color-primary: #3880ff;
   --ion-color-primary-rgb: 56, 128, 255;

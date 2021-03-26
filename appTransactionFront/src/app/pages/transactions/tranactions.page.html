@@ -1,9 +1,66 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>tranactions</ion-title>
+<ion-header class="ion-no-padding">
+  <ion-toolbar class="ion-no-padding">
+    <ion-buttons slot="start">
+      <ion-menu-button color="weuzy" autoHide="false"></ion-menu-button>
+    </ion-buttons>
+    <ion-item lines="none" slot="end">
+      <ion-thumbnail class="image-center">
+        <div class="center">
+          <ion-img src="assets/images/weuzyMoney.png"></ion-img>
+        </div>
+      </ion-thumbnail>
+    </ion-item>
+    <div  class="title">
+      <ion-icon color="weuzy" slot="start"
+                name="checkmark-circle-outline"></ion-icon>
+      <b>Les transactions</b>
+    </div>
   </ion-toolbar>
+  <div class="inner"></div>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-margin">
+   <ion-row class="header-row">
+    <ion-col size="2">
+      Date
+    </ion-col>
+    <ion-col size="3" size-md="3" size-lg="2" tappable (click)="sortBy('type')">
+      Utilisateurs
+      <ion-icon name="arrow-down" *ngIf="sortDirection==1"></ion-icon>
+      <ion-icon name="arrow-up" *ngIf="sortDirection==2"></ion-icon>
+    </ion-col>
+    <ion-col size="2">
+      Type
+    </ion-col>
+    <ion-col size="3">
+      Montant
+    </ion-col>
+    <ion-col size="2" >
+      Frais
+    </ion-col>
+  </ion-row>
 
+  <ion-row *ngFor="let row of data; let i = index;" class="data-row">
+    <ion-col size="2">
+      {{row.dateDepot | date: 'MM/yyyy'}}
+    </ion-col>
+    <ion-col size="3" size-md="3" size-lg="2">
+      {{row.user?.prenom}}
+    </ion-col>
+    <ion-col size="2">
+      {{row.type}}
+    </ion-col>
+    <ion-col size="3">
+      {{row.montant}}
+    </ion-col>
+    <ion-col size="2">
+      {{row.TTC}}
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size="2" style="width: 70%; float: right">
+      <ion-label  color="medium">Total</ion-label>
+      <ion-input type="number" [value]="total" readonly style="color: orangered"></ion-input>
+    </ion-col>
+  </ion-row>
 </ion-content>

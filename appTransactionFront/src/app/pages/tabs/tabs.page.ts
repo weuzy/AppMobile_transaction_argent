@@ -9,7 +9,11 @@ export class TabsPage implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.getRoles();
+  }
+  getRoles() {
+    return localStorage.getItem('role');
   }
 
 }

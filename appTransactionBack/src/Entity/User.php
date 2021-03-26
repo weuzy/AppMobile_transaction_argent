@@ -10,6 +10,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
+
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -38,6 +42,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *           "route_name" = "edit_user"},
  *        "delete"}
  * )
+ * @ApiFilter(BooleanFilter::class, properties={"archive" : true})
  */
 class User implements UserInterface
 {
@@ -70,13 +75,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"connectUser", "admin:read", "admin:write", "profil:read", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
+     * @Groups({"Trans:read", "connectUser", "admin:read", "admin:write", "profil:read", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"admin:read", "admin:write", "profil:read", "Trans:read","Trans:write" , "dep:read", "dep:write", "agence:read", "agence:write"})
+     * @Groups({"Trans:read", "connectUser", "admin:read", "admin:write", "profil:read", "Trans:read","Trans:write" , "dep:read", "dep:write", "agence:read", "agence:write"})
      */
     private $nom;
 
@@ -88,13 +93,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"admin:read", "profil:read"})
+     * @Groups({"admin:read", "admin:write", "profil:read"})
      */
     private $isBlocked;
 
     /**
      * @ORM\ManyToOne(targetEntity=Profil::class, inversedBy="users")
-     * @Groups({"admin:read", "admin:write", "Trans:read", "agence:read", "agence:write"})
+     * @Groups({"connectUser","admin:read", "admin:write", "Trans:read", "agence:read", "agence:write"})
      */
     private $profil;
 
@@ -112,7 +117,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"admin:read", "admin:write", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
+     * @Groups({"connectUser", "admin:read", "admin:write", "Trans:read","Trans:write", "dep:read", "dep:write", "agence:read", "agence:write"})
      */
     private $username;
 

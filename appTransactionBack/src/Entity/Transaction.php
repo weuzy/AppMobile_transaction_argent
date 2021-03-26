@@ -18,8 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      attributes = {
  *          "security" = "is_granted('ROLE_AdminAgence') or is_granted('ROLE_UtilisateurAgence')",
  *          "security_message" = "vous n'avez pas accés à cette ressource",
- *          "pagination_enabled" = true,
- *          "pagination_items_per_page" = 8
+ *          "pagination_enabled" = false,
+ *          "pagination_items_per_page" = 1
  * },
  *      routePrefix = "/19weuzy",
  *      collectionOperations = {"get", "post"},
@@ -32,7 +32,7 @@ class Transaction
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:read","Trans:write","depotTrans"})
      */
     private $id;
 
@@ -44,7 +44,7 @@ class Transaction
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"Trans:read","depotTrans"})
+     * @Groups({"Trans:read","depotTrans","connectUser","admin:read"})
      */
     private $dateDepot;
 
@@ -68,31 +68,31 @@ class Transaction
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:write"})
      */
     private $fraisDepot;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:write"})
      */
     private $fraisRetrait;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:write"})
      */
     private $fraisEtat;
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:write"})
      */
     private $fraisSystem;
 
     /**
      * @ORM\ManyToOne(targetEntity=CompteDeTransaction::class, inversedBy="transactions")
-     * @Groups({"Trans:read","Trans:write"})
+     * @Groups({"Trans:write"})
      */
     private $compte;
 
@@ -104,66 +104,75 @@ class Transaction
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="transactions")
+     * @Groups({"Trans:read"})
      */
     private $user;
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Groups({"Trans:read"})
      */
     private $dateAnnulation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $prenomEmetteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $nomEmetteur;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $cniEmetteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $prenomRecepteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $nomRecepteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $telephoneRecepteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $telephoneEmetteur;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"depotTrans","retraitTrans"})
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"Trans:read","retraitTrans"})
      */
     private $cniRecepteur;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"Trans:read","depotTrans","retraitTrans"})
+     */
+    private $type;
 
 
     public function __construct()
@@ -437,6 +446,18 @@ class Transaction
     public function setCniRecepteur(int $cniRecepteur): self
     {
         $this->cniRecepteur = $cniRecepteur;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

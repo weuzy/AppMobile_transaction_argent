@@ -41,7 +41,6 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
     public function remove($data, array $context = [])
     {
         $data -> setIsBlocked(1);
-        dd($data);
         $this -> _em -> persist($data);
         $this-> _em -> flush();
     }

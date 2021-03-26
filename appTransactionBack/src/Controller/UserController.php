@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\AgenceRepository;
 use App\Repository\UserRepository;
 use App\Repository\ProfilRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,7 @@ class UserController extends AbstractController
     private $em;
     private $repoUser;
     private $weuz;
+    private $agenRepo;
     public function __construct(
         UserPasswordEncoderInterface $encoder,
         SerializerInterface $serializer,
@@ -32,7 +34,9 @@ class UserController extends AbstractController
         ValidatorInterface $validator,
         EntityManagerInterface $em,
         UserRepository $repo,
-        Security $weuz
+        Security $weuz,
+        AgenceRepository $agenRepo
+
     )
     {
         $this -> encoder = $encoder;
@@ -42,7 +46,31 @@ class UserController extends AbstractController
         $this -> validator = $validator;
         $this -> em = $em;
         $this -> weuz = $weuz;
+        $this -> agenRepo = $agenRepo;
     }
+    /**
+     * @Route(path="/api/19weuzy/listeCaissiers", name="listeCaissiers", methods="get"),
+     */
+    public function listeCaissiers() {
+        $users = $this -> repoUser -> getUser();
+        return $this -> json($users, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(path="/api/19weuzy/bloquageCaissier/{id}", name="bloquageCaissier", methods="patch"),
+     */
+    public function bloquageCaissier(int $id) {
+        $user = $this -> repoUser -> find($id);
+        if ($user->getProfil()->getLibelle() === 'Caissier') {
+            $user -> setIsBlocked(1);
+            $this->em->persist($user);
+            $this -> em ->flush();
+            return $this -> json($user, Response::HTTP_OK);
+        }
+        return new JsonResponse('l\'utilisateur doit être un \'caissier\' ', Response::HTTP_BAD_REQUEST);
+
+    }
+
     /**
      * @Route(path="/api/19weuzy/user", name="getUserConnect", methods="get"),
      */
@@ -59,11 +87,19 @@ class UserController extends AbstractController
     public function index(Request $request)
     {
         $user = $request -> request -> all();
-            $photo = $request -> files -> get('photo');
+        $use = new User();
+        $photo = $request -> files -> get('photo');
             $profil = $this -> pro -> findOneByLibelle($user['profils']);
+        if (isset($user['agence'])) {
+            $idAgence = (int)$user['agence'];
+            unset($user['agence']);
+            $agence = $this -> agenRepo ->find($idAgence);
+            $use -> setAgence($agence);
+        } else {
+            $use -> setAgence(null);
+        }
             // $user = $this -> serializer -> denormalize($user, "App\Entity\\" . $user['profils']);
-            $use = new User();
-            $use -> setProfil($profil)
+             $use -> setProfil($profil)
                   -> setEmail($user['email'])
                   -> setPrenom( $user['prenom'] )
                   -> setNom( $user['nom'] )

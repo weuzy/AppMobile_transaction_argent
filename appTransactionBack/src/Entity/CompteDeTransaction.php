@@ -105,6 +105,7 @@ class CompteDeTransaction
 
     /**
      * @ORM\OneToMany(targetEntity=Transaction::class, mappedBy="compte")
+     * @Groups({"connectUser", "admin:read"})
      */
     private $transactions;
 

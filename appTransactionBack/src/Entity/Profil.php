@@ -34,13 +34,12 @@ class Profil
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"admin:read","profil:read", "Trans:read", "agence:read", "agence:write"})
+     * @Groups({"connectUser", "admin:read","profil:read", "Trans:read", "agence:read", "agence:write"})
      */
     private $libelle;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="profil")
-     * @Groups({"profil:read"})
      */
     private $users;
 

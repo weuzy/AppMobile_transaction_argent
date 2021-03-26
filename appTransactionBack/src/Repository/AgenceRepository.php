@@ -23,13 +23,11 @@ class AgenceRepository extends ServiceEntityRepository
     //  * @return Agence[] Returns an array of Agence objects
     //  */
     /*
-    public function findByExampleField($value)
+    public function findByNom($value)
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
+            ->andWhere('a.nom = :val')
             ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;

@@ -55,7 +55,6 @@ class AgenceDataPersister implements ContextAwareDataPersisterInterface
         } else {
             throw new AgenceException("la solde du compte doit être rechargé au moins 700000");
         }
-        dd($data);
 
         
     }
